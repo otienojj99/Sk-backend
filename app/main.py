@@ -10,6 +10,7 @@ from . import models, schemas, users, database
 from .schemas import LoginRequest, TokenResponse
 from .users import authenticate_user, get_current_user
 from .token import create_access_token
+import os, json
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -53,8 +54,8 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 def get_me(current_user: models.User = Depends(get_current_user)):
      return current_user
  
- 
-cred = credentials.Certificate("C:/Users/user/OneDrive/Desktop/skinlytics/backend/serviceFile/skinlytics-85cec-firebase-adminsdk-fbsvc-897ed8b128.json")
+cred_json = os.getenv("FIREBASE_CREDENTIALS")
+cred = credentials.Certificate(json.loads(cred_json))
 firebase_admin.initialize_app(cred)
 
 app.include_router(auth_router)
